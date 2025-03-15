@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'workos_id',
         'avatar',
+        'role',
     ];
 
     /**
@@ -45,5 +46,29 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Check if user has admin role
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Check if user has driver role
+     */
+    public function isDriver(): bool
+    {
+        return $this->role === 'driver';
+    }
+
+    /**
+     * Get available roles for users
+     */
+    public static function getAvailableRoles(): array
+    {
+        return ['user', 'admin', 'driver'];
     }
 }

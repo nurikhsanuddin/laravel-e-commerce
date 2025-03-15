@@ -2,9 +2,9 @@ import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
-import { BookOpen, ChartBarStacked, Folder, LayoutGrid, User } from 'lucide-react';
+import { type NavItem, type SharedData } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
+import { BookOpen, BoxIcon, ChartBarStacked, Folder, LayoutGrid, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -12,16 +12,25 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         href: '/dashboard',
         icon: LayoutGrid,
+        roles: ['admin'], // Everyone can see dashboard
     },
     {
-        title: 'Users',
+        title: 'Manajemen User',
         href: '/users',
-        icon: User,
+        icon: Users,
+        roles: ['admin'], // Only admin can see user management
     },
     {
-        title: 'Categories',
+        title: 'Manajemen Kategori',
         href: '/categories',
         icon: ChartBarStacked,
+        roles: ['admin'], // Only admin can see category management
+    },
+    {
+        title: 'Manajemen Produk',
+        href: '/products',
+        icon: BoxIcon,
+        roles: ['admin'], // Only admin can see category management
     },
 ];
 
@@ -38,7 +47,15 @@ const footerNavItems: NavItem[] = [
     },
 ];
 
+// get user data from the session
+// const window: any = global;
+// console.log('User data:', window.auth);
+
 export function AppSidebar() {
+    const { auth } = usePage<SharedData>().props;
+
+    console.log('User   :', auth.user);
+    console.log('User Role', auth.user.role);
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
