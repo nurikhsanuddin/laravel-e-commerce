@@ -4,6 +4,7 @@ import { type BreadcrumbItem } from '@/types';
 import { EyeIcon, PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
+import { format_rupiah } from '@/lib/utils';
 
 interface Product {
     id: number;
@@ -47,6 +48,7 @@ export default function Index({ products }: Props) {
         }
     };
 
+   
     return (
         <AppSidebarLayout breadcrumbs={breadcrumbs}>
             <Head title="Products" />
@@ -100,7 +102,7 @@ export default function Index({ products }: Props) {
                                                 </Link>
                                             </td>
                                             <td className="text-foreground px-6 py-4">
-                                                ${typeof product.price === 'number' ? product.price.toFixed(2) : product.price}
+                                                {format_rupiah(product.price)}
                                             </td>
                                             <td className="text-foreground px-6 py-4">{product.stock}</td>
                                             <td className="text-foreground px-6 py-4">{product.category.name}</td>

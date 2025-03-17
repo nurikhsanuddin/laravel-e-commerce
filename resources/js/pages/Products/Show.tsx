@@ -5,7 +5,7 @@ import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
 import { type BreadcrumbItem } from '@/types';
 import { ArrowLeftIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { Head, Link } from '@inertiajs/react';
-
+import {format_rupiah} from '@/lib/utils';
 interface Product {
     id: number;
     name: string;
@@ -42,6 +42,10 @@ export default function Show({ product }: Props) {
             href: `/products/${product.id}`,
         },
     ];
+
+    const price = format_rupiah(product.price);
+
+    console.log('harganya', price);
 
     return (
         <AppSidebarLayout breadcrumbs={breadcrumbs}>
@@ -80,7 +84,7 @@ export default function Show({ product }: Props) {
                                     </TableRow>
                                     <TableRow>
                                         <TableCell className="font-medium">Price</TableCell>
-                                        <TableCell>${typeof product.price === 'number' ? product.price.toFixed(2) : product.price}</TableCell>
+                                        <TableCell>{price}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell className="font-medium">Stock</TableCell>
