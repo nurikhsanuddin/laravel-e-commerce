@@ -123,11 +123,6 @@ export default function Home({ featuredProducts, categories, auth }: Props) {
         setSearchQuery(e.target.value);
     };
 
-    const handleSearchSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        filterProducts();
-    };
-
     const handleCategorySelect = (categoryId: number | null) => {
         setSelectedCategory(categoryId);
     };
@@ -148,7 +143,7 @@ export default function Home({ featuredProducts, categories, auth }: Props) {
 
                             {/* Search bar - Desktop */}
                             <div className="mx-4 hidden flex-1 items-center md:flex lg:mx-6">
-                                <form onSubmit={handleSearchSubmit} className="relative w-full max-w-xl">
+                                <div className="relative w-full max-w-xl">
                                     <Input
                                         type="text"
                                         placeholder="Search for products..."
@@ -157,10 +152,7 @@ export default function Home({ featuredProducts, categories, auth }: Props) {
                                         onChange={handleSearch}
                                     />
                                     <Search className="absolute top-2.5 left-3 h-5 w-5 text-gray-400" />
-                                    <Button type="submit" className="absolute top-0 right-0 rounded-l-none">
-                                        Search
-                                    </Button>
-                                </form>
+                                </div>
                             </div>
 
                             {/* Navigation - Desktop */}
@@ -227,7 +219,7 @@ export default function Home({ featuredProducts, categories, auth }: Props) {
 
                         {/* Mobile Search */}
                         <div className="mt-3 md:hidden">
-                            <form onSubmit={handleSearchSubmit} className="relative">
+                            <div className="relative">
                                 <Input
                                     type="text"
                                     placeholder="Search products..."
@@ -236,10 +228,7 @@ export default function Home({ featuredProducts, categories, auth }: Props) {
                                     onChange={handleSearch}
                                 />
                                 <Search className="absolute top-2 left-2.5 h-4.5 w-4.5 text-gray-400" />
-                                <Button type="submit" size="sm" className="absolute top-0 right-0 h-9 rounded-l-none">
-                                    Search
-                                </Button>
-                            </form>
+                            </div>
                         </div>
 
                         {/* Mobile Menu */}
@@ -344,10 +333,7 @@ export default function Home({ featuredProducts, categories, auth }: Props) {
                             <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-5">
                                 {filteredProducts.map((product) => (
                                     <Card key={product.id} className="flex h-full flex-col overflow-hidden border-gray-200">
-                                        <Link
-                                            href={route('products.show', product.id)}
-                                            className="group relative aspect-square overflow-hidden bg-gray-100"
-                                        >
+                                        <div className="group relative aspect-square overflow-hidden bg-gray-100">
                                             {product.image ? (
                                                 <img
                                                     src={product.image}
@@ -364,10 +350,7 @@ export default function Home({ featuredProducts, categories, auth }: Props) {
                                                 <button
                                                     className="flex h-6 w-6 items-center justify-center rounded-full bg-white shadow hover:bg-gray-100 sm:h-7 sm:w-7"
                                                     aria-label="Add to wishlist"
-                                                    onClick={(e) => {
-                                                        e.preventDefault(); // Prevent navigation when clicking the wishlist button
-                                                        toggleWishlist(product.id);
-                                                    }}
+                                                    onClick={() => toggleWishlist(product.id)}
                                                 >
                                                     <Heart
                                                         className={`h-3 w-3 sm:h-3.5 sm:w-3.5 ${
@@ -383,13 +366,11 @@ export default function Home({ featuredProducts, categories, auth }: Props) {
                                                     </Badge>
                                                 </div>
                                             )}
-                                        </Link>
+                                        </div>
                                         <div className="flex flex-grow flex-col p-2 sm:p-3">
                                             <div className="mb-1">
                                                 {product.category && <span className="text-xs text-gray-500">{product.category}</span>}
-                                                <Link href={route('products.show', product.id)}>
-                                                    <h3 className="hover:text-primary line-clamp-2 text-xs font-medium sm:text-sm">{product.name}</h3>
-                                                </Link>
+                                                <h3 className="line-clamp-2 text-xs font-medium sm:text-sm">{product.name}</h3>
                                             </div>
 
                                             <p className="mb-2 line-clamp-2 text-xs text-gray-600 sm:mb-3">{product.description}</p>
@@ -399,10 +380,7 @@ export default function Home({ featuredProducts, categories, auth }: Props) {
                                                     {format_rupiah(product.price).replace(',00', '')}
                                                 </span>
                                                 <Button
-                                                    onClick={(e) => {
-                                                        e.preventDefault(); // Prevent navigation when clicking the add to cart button
-                                                        addToCart(product.id);
-                                                    }}
+                                                    onClick={() => addToCart(product.id)}
                                                     disabled={product.stock <= 0}
                                                     variant={product.stock <= 0 ? 'outline' : 'default'}
                                                     size="sm"
@@ -531,12 +509,10 @@ export default function Home({ featuredProducts, categories, auth }: Props) {
                             <div>
                                 <h3 className="mb-4 text-xl font-semibold">PT. Menara Galvalum</h3>
                                 <p className="text-gray-300">
-                                    PT. Menara Galvalum adalah perusahaan yang bergerak di bidang produksi dan distribusi material galvalum untuk
-                                    berbagai kebutuhan konstruksi. Dengan pengalaman dan inovasi yang terus berkembang, kami berkomitmen untuk
-                                    menyediakan produk berkualitas tinggi yang sesuai dengan standar industri.{' '}
+                                    Your one-stop shop for all your shopping needs. Fast delivery, secure payments, and excellent customer service.
                                 </p>
                             </div>
-                            {/* <div>
+                            <div>
                                 <h4 className="mb-4 text-lg font-semibold">Quick Links</h4>
                                 <ul className="space-y-2">
                                     <li>
@@ -560,20 +536,20 @@ export default function Home({ featuredProducts, categories, auth }: Props) {
                                         </a>
                                     </li>
                                 </ul>
-                            </div> */}
+                            </div>
                             <div>
-                                <h4 className="mb-4 text-lg font-semibold">Hubungi Kami</h4>
+                                <h4 className="mb-4 text-lg font-semibold">Contact Info</h4>
                                 <address className="text-gray-300 not-italic">
-                                    <p>Jl. Adi Sucipto</p>
-                                    <p>Karangasem, Kec. Laweyan, Kota Surakarta, Jawa Tengah 57145</p>
-                                    {/* <p className="mt-2">Email: info@PT. Menara Galvalum.com</p> */}
-                                    <p>Telp : 0852-9006-0664</p>
+                                    <p>123 Shop Street</p>
+                                    <p>Jakarta, Indonesia</p>
+                                    <p className="mt-2">Email: info@PT. Menara Galvalum.com</p>
+                                    <p>Phone: (123) 456-7890</p>
                                 </address>
                             </div>
                         </div>
-                        {/* <div className="mt-8 border-t border-gray-700 pt-8 text-center text-gray-400">
+                        <div className="mt-8 border-t border-gray-700 pt-8 text-center text-gray-400">
                             <p>&copy; {new Date().getFullYear()} PT. Menara Galvalum. All rights reserved.</p>
-                        </div> */}
+                        </div>
                     </div>
                 </footer>
 

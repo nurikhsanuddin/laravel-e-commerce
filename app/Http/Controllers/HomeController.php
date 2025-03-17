@@ -22,7 +22,7 @@ class HomeController extends Controller
 
         $categories = Category::all();
 
-        return Inertia::render('Home', [
+        return Inertia::render('home', [
             'featuredProducts' => $featuredProducts->map(function ($product) {
                 return [
                     'id' => $product->id,

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
+
 class OrderController extends Controller
 {
     /**
@@ -19,7 +20,7 @@ class OrderController extends Controller
             ->latest()
             ->get();
 
-        return Inertia::render('Orders/Index', [
+        return Inertia::render('orders/index', [
             'orders' => $orders->map(function ($order) {
                 return [
                     'id' => $order->id,
@@ -51,7 +52,7 @@ class OrderController extends Controller
             ->where('user_id', Auth::id())
             ->findOrFail($id);
 
-        return Inertia::render('Orders/Show', [
+        return Inertia::render('orders/show', [
             'order' => [
                 'id' => $order->id,
                 'status' => $order->status,

@@ -71,13 +71,32 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        // Load the category relationship
         $product->load('category');
 
-        // Ensure price is a number
-        $product->price = (float) $product->price;
+        // Convert the category to string to avoid rendering issues in React
+        $product->category = $product->category?->name;
 
-        return Inertia::render('Products/Show', [
-            'product' => $product
+        // Get related products from the same category (max 4)
+        $relatedProducts = Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->take(4)
+            ->get();
+
+        // Convert the category to string for related products
+        $relatedProducts->each(function ($item) {
+            $item->category = $item->category?->name;
+        });
+
+        return Inertia::render('product-detail', [
+            'product' => $product,
+            'relatedProducts' => $relatedProducts,
+            'auth' => [
+                'user' => auth()->user() ? [
+                    'name' => auth()->user()->name,
+                    'role' => auth()->user()->role,
+                ] : null,
+            ]
         ]);
     }
 
