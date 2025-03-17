@@ -6,7 +6,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-
+use Illuminate\Support\Facades\Storage;
 class OrderController extends Controller
 {
     /**
@@ -79,5 +79,41 @@ class OrderController extends Controller
                 }),
             ]
         ]);
+    }
+
+    /**
+     * Upload payment proof for an order
+     */
+    public function uploadPaymentProof(Request $request, $id)
+    {
+        $request->validate([
+            'payment_proof' => 'required|image|max:2048',
+        ]);
+
+        $order = Order::where('user_id', Auth::id())->findOrFail($id);
+
+        // Only allow upload if payment status is pending
+        if ($order->payment_status !== 'pending') {
+            return back()->with('error', 'Payment proof can only be uploaded for pending payments');
+        }
+
+        if ($request->hasFile('payment_proof')) {
+            // Delete old payment proof if exists
+            if ($order->payment_proof) {
+                Storage::delete('public/' . $order->payment_proof);
+            }
+
+            // Store the new image
+            $path = $request->file('payment_proof')->store('payment_proofs', 'public');
+
+            // Update the order
+            $order->payment_proof = $path;
+            $order->payment_status = 'processing'; // Change to processing status
+            $order->save();
+
+            return back()->with('success', 'Payment proof uploaded successfully');
+        }
+
+        return back()->with('error', 'Failed to upload payment proof');
     }
 }

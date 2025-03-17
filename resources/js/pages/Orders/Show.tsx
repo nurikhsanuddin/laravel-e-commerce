@@ -1,12 +1,15 @@
-import { Head, Link } from '@inertiajs/react';
-import { ChevronLeft, Truck, Package, CheckCircle } from 'lucide-react';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { ChevronLeft, Truck, Package, CheckCircle, Upload } from 'lucide-react';
 import { format } from 'date-fns';
+import { toast } from 'react-hot-toast';
 
 // Import components
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { format_rupiah } from '@/lib/utils';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 
 interface OrderItem {
     id: number;
@@ -27,6 +30,7 @@ interface Order {
     status: string;
     payment_status: string;
     payment_method: string;
+    payment_proof?: string | null;
     shipping_address: string;
     shipping_cost: number;
     total_price: number;
@@ -40,6 +44,29 @@ interface OrderShowProps {
 }
 
 export default function OrderShow({ order }: OrderShowProps) {
+    const { data, setData, post, processing, errors, reset, progress } = useForm({
+        payment_proof: null as File | null,
+    });
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setData('payment_proof', e.target.files[0]);
+        }
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        post(route('orders.payment-proof', order.id), {
+            onSuccess: () => {
+                reset('payment_proof');
+                toast.success('Payment proof uploaded successfully');
+            },
+            onError: () => {
+                toast.error('Failed to upload payment proof');
+            },
+        });
+    };
+
     const getStatusColor = (status: string) => {
         switch (status.toLowerCase()) {
             case 'pending':
@@ -63,6 +90,8 @@ export default function OrderShow({ order }: OrderShowProps) {
                 return 'bg-green-100 text-green-800';
             case 'pending':
                 return 'bg-amber-100 text-amber-800';
+            case 'processing':
+                return 'bg-blue-100 text-blue-800';
             case 'failed':
                 return 'bg-red-100 text-red-800';
             default:
@@ -84,6 +113,9 @@ export default function OrderShow({ order }: OrderShowProps) {
     };
 
     const subtotal = order.total_price - order.shipping_cost;
+    
+    // Check if payment proof can be uploaded (only for pending payment status)
+    const canUploadPaymentProof = order.payment_status.toLowerCase() === 'pending';
     
     return (
         <>
@@ -229,7 +261,7 @@ export default function OrderShow({ order }: OrderShowProps) {
                                 </div>
                             </Card>
                             
-                            <Card>
+                            <Card className="mb-6">
                                 <div className="border-b p-6">
                                     <h2 className="text-xl font-semibold">Order Information</h2>
                                 </div>
@@ -246,6 +278,79 @@ export default function OrderShow({ order }: OrderShowProps) {
                                             <dd className="whitespace-pre-wrap">{order.shipping_address}</dd>
                                         </div>
                                     </dl>
+                                </div>
+                            </Card>
+                            
+                            {/* Payment Proof Section */}
+                            <Card>
+                                <div className="border-b p-6">
+                                    <h2 className="text-xl font-semibold">Payment Proof</h2>
+                                </div>
+                                
+                                <div className="p-6">
+                                    {order.payment_proof ? (
+                                        <div className="space-y-4">
+                                            <p className="text-sm text-gray-500">
+                                                Payment proof has been uploaded.
+                                            </p>
+                                            <div className="overflow-hidden rounded-md border">
+                                                <img 
+                                                    src={`/storage/${order.payment_proof}`}
+                                                    alt="Payment proof"
+                                                    className="w-full h-auto"
+                                                />
+                                            </div>
+                                            
+                                            <Badge className={getPaymentStatusColor(order.payment_status)}>
+                                                Status: {order.payment_status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                                            </Badge>
+                                        </div>
+                                    ) : canUploadPaymentProof ? (
+                                        <form onSubmit={handleSubmit} className="space-y-4">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="payment_proof">Upload Payment Proof</Label>
+                                                <Input
+                                                    id="payment_proof"
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleFileChange}
+                                                    className={errors.payment_proof ? 'border-red-500' : ''}
+                                                />
+                                                {errors.payment_proof && (
+                                                    <p className="text-sm text-red-500">{errors.payment_proof}</p>
+                                                )}
+                                            </div>
+                                            
+                                            {progress && (
+                                                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                                                    <div 
+                                                        className="bg-primary h-2.5 rounded-full" 
+                                                        style={{ width: `${progress.percentage}%` }}
+                                                    ></div>
+                                                </div>
+                                            )}
+                                            
+                                            <Button 
+                                                type="submit" 
+                                                className="w-full" 
+                                                disabled={processing || !data.payment_proof}
+                                            >
+                                                <Upload className="mr-2 h-4 w-4" />
+                                                Upload Payment Proof
+                                            </Button>
+                                            
+                                            <p className="text-xs text-gray-500">
+                                                Please upload proof of payment (receipt or transfer confirmation). 
+                                                Acceptable formats: JPG, PNG (max 2MB).
+                                            </p>
+                                        </form>
+                                    ) : (
+                                        <div className="text-center py-4">
+                                            <p className="text-gray-500">
+                                                Payment proof upload is not available for this order's current status.
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             </Card>
                         </div>

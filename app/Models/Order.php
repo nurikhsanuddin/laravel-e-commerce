@@ -10,7 +10,15 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     protected $fillable = [
-        'user_id', 'total_price', 'status', 'payment_status', 'payment_method', 'shipping_address', 'shipping_cost', 'driver_id',
+        'user_id',
+        'total_price',
+        'status',
+        'payment_status',
+        'payment_method',
+        'payment_proof',
+        'shipping_address',
+        'shipping_cost',
+        'driver_id',
     ];
 
     // Relasi: Order dimiliki oleh seorang customer

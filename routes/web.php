@@ -34,6 +34,10 @@ Route::middleware(['auth'])->group(function () {
     // Order management routes
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+
+    // Order payment proof upload
+    Route::post('/orders/{id}/payment-proof', [OrderController::class, 'uploadPaymentProof'])
+        ->name('orders.payment-proof');
 });
 
 // Admin routes
