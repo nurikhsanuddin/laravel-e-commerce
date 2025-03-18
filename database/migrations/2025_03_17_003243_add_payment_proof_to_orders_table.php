@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
@@ -19,7 +20,7 @@ return new class extends Migration {
         Schema::table('orders', function (Blueprint $table) {
             $table->dropColumn('payment_proof');
             // Return payment_status to original values
-            $table->enum('payment_status', ['pending', 'paid', 'failed'])->default('pending')->change();
+            $table->enum('payment_status', ['pending', 'processing', 'paid', 'failed'])->default('pending')->change();
         });
     }
 };
