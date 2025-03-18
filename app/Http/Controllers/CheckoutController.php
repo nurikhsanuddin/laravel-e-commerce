@@ -33,9 +33,9 @@ class CheckoutController extends Controller
         }
 
         // Simplified shipping cost calculation based on weight
-        $shipping_cost = max(10, $weight * 0.5); // Base cost of $10 or $0.5 per weight unit
+        $shipping_cost = max(0, $weight * 0.5); // Base cost of $10 or $0.5 per weight unit
 
-        return Inertia::render('checkout', [
+        return Inertia::render('Checkout', [
             'cart' => $cart,
             'subtotal' => $total,
             'shipping_cost' => $shipping_cost,
@@ -67,7 +67,7 @@ class CheckoutController extends Controller
             $weight += ($item['weight'] ?? 0) * $item['quantity'];
         }
 
-        $shipping_cost = max(10, $weight * 0.5);
+        $shipping_cost = max(0, $weight * 0.5);
         $total = $subtotal + $shipping_cost;
 
         // Create the order

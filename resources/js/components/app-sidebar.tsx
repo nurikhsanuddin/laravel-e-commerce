@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, BoxIcon, ChartBarStacked, Folder, LayoutGrid, Users } from 'lucide-react';
+import { BookOpen, BoxIcon, ChartBarStacked, Folder, LayoutGrid, ShoppingBag, Truck, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -30,7 +30,20 @@ const mainNavItems: NavItem[] = [
         title: 'Manajemen Produk',
         href: '/products',
         icon: BoxIcon,
-        roles: ['admin'], // Only admin can see category management
+        roles: ['admin'], // Only admin can see product management
+    },
+    {
+        title: 'Pesanan Masuk',
+        href: '/admin/orders',
+        icon: ShoppingBag,
+        roles: ['admin'], // Only admin can see incoming orders
+    },
+
+    {
+        title: 'Pesanan Saya',
+        href: '/driver/orders',
+        icon: Truck,
+        roles: ['driver', 'admin'], // Only driver can see their orders
     },
 ];
 

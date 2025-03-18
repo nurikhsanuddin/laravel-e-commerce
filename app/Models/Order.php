@@ -9,6 +9,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
+    // Payment status constants
+    const PAYMENT_STATUS_PENDING = 'pending';
+    const PAYMENT_STATUS_PROCESSING = 'processing';
+    const PAYMENT_STATUS_PAID = 'paid';
+    const PAYMENT_STATUS_FAILED = 'failed';
+
+    // Order status constants
+    const STATUS_PENDING = 'pending';
+    const STATUS_PROCESSING = 'processing';
+    const STATUS_OUT_FOR_DELIVERY = 'shipped';
+    const STATUS_DELIVERED = 'delivered';
+    const STATUS_CANCELLED = 'cancelled';
+
     protected $fillable = [
         'user_id',
         'total_price',

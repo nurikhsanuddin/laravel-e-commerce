@@ -7,6 +7,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Driver\OrderController as DriverOrderController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\DriverMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -58,10 +61,33 @@ Route::middleware([
 
     // Products routes
     Route::resource('products', ProductController::class);
+
+
+    Route::get('/admin/orders', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('admin.orders.index');
+    Route::get('/admin/orders/{id}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('admin.orders.show');
+    Route::post('/admin/orders/{id}/verify-payment', [App\Http\Controllers\Admin\OrderController::class, 'verifyPayment'])->name('admin.orders.verify-payment');
+    Route::post('/admin/orders/{id}/assign-driver', [App\Http\Controllers\Admin\OrderController::class, 'assignDriver'])->name('admin.orders.assign-driver');
+    Route::post('/admin/orders/{id}/reject', [App\Http\Controllers\Admin\OrderController::class, 'rejectOrder'])->name('admin.orders.reject');
+
+
+    Route::get('/driver/orders', [DriverOrderController::class, 'index'])->name('driver.orders.index');
+    Route::get('/driver/orders/{order}', [DriverOrderController::class, 'show'])->name('driver.orders.show');
+    Route::post('/driver/orders/{order}/delivered', [DriverOrderController::class, 'markDelivered'])->name('driver.orders.delivered');
 });
 
 // Product detail route
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+
+
+
+// Admin Order Routes
+// Route::middleware(['auth', 'role:admin'])->group(function () {
+//     Route::get('/admin/orders', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('admin.orders.index');
+//     Route::get('/admin/orders/{id}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('admin.orders.show');
+//     Route::post('/admin/orders/{id}/verify-payment', [App\Http\Controllers\Admin\OrderController::class, 'verifyPayment'])->name('admin.orders.verify-payment');
+//     Route::post('/admin/orders/{id}/assign-driver', [App\Http\Controllers\Admin\OrderController::class, 'assignDriver'])->name('admin.orders.assign-driver');
+//     Route::post('/admin/orders/{id}/reject', [App\Http\Controllers\Admin\OrderController::class, 'rejectOrder'])->name('admin.orders.reject');
+// });
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
