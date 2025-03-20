@@ -1,15 +1,15 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { ChevronLeft, Truck, Package, CheckCircle, Upload } from 'lucide-react';
 import { format } from 'date-fns';
+import { CheckCircle, ChevronLeft, ClipboardCopy, Package, Truck, Upload } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 // Import components
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { format_rupiah } from '@/lib/utils';
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { format_rupiah } from '@/lib/utils';
 
 interface OrderItem {
     id: number;
@@ -69,13 +69,13 @@ export default function OrderShow({ order }: OrderShowProps) {
 
     const getStatusColor = (status: string) => {
         switch (status.toLowerCase()) {
-            case 'pending':
+            case 'menunggu':
                 return 'bg-amber-100 text-amber-800';
-            case 'processing':
+            case 'diproses':
                 return 'bg-blue-100 text-blue-800';
-            case 'shipped':
+            case 'driver_telah_ditugaskan':
                 return 'bg-purple-100 text-purple-800';
-            case 'delivered':
+            case 'terkirim':
                 return 'bg-green-100 text-green-800';
             case 'cancelled':
                 return 'bg-red-100 text-red-800';
@@ -86,13 +86,15 @@ export default function OrderShow({ order }: OrderShowProps) {
 
     const getPaymentStatusColor = (status: string) => {
         switch (status.toLowerCase()) {
-            case 'paid':
-                return 'bg-green-100 text-green-800';
-            case 'pending':
+            case 'menunggu':
                 return 'bg-amber-100 text-amber-800';
-            case 'processing':
+            case 'terbayar':
+                return 'bg-green-100 text-green-800';
+            case 'return':
+                return 'bg-amber-100 text-amber-800';
+            case 'diproses':
                 return 'bg-blue-100 text-blue-800';
-            case 'failed':
+            case 'gagal':
                 return 'bg-red-100 text-red-800';
             default:
                 return 'bg-gray-100 text-gray-800';
@@ -113,51 +115,49 @@ export default function OrderShow({ order }: OrderShowProps) {
     };
 
     const subtotal = order.total_price - order.shipping_cost;
-    
+
     // Check if payment proof can be uploaded (only for pending payment status)
-    const canUploadPaymentProof = order.payment_status.toLowerCase() === 'pending';
-    
+    const canUploadPaymentProof = order.payment_status.toLowerCase() === 'menunggu';
+
     return (
         <>
             <Head title={`Order #${order.id}`} />
-            
+
             <div className="min-h-screen bg-gray-50 py-12">
                 <div className="container mx-auto px-4">
                     <div className="mb-8">
                         <Button variant="outline" asChild>
                             <Link href={route('orders.index')}>
                                 <ChevronLeft className="mr-2 h-4 w-4" />
-                                Back to My Orders
+                                Kembali ke Pesanan
                             </Link>
                         </Button>
                     </div>
-                    
+
                     <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                             <h1 className="text-3xl font-bold">Order #{order.id}</h1>
-                            <p className="text-gray-500">
-                                Placed on {format(new Date(order.created_at), 'PPP')}
-                            </p>
+                            <p className="text-gray-500">Dibuat Pada {format(new Date(order.created_at), 'PPP')}</p>
                         </div>
-                        
+
                         <div className="flex flex-wrap gap-2">
                             <Badge className={getStatusColor(order.status)}>
-                                Order: {order.status}
+                                Pesanan: {order.status.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
                             </Badge>
                             <Badge className={getPaymentStatusColor(order.payment_status)}>
-                                Payment: {order.payment_status}
+                                Pembayaran: {order.payment_status.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
                             </Badge>
                         </div>
                     </div>
-                    
+
                     <div className="grid gap-8 lg:grid-cols-12">
                         {/* Order Details */}
                         <div className="lg:col-span-8">
                             <Card className="mb-8">
                                 <div className="border-b p-6">
-                                    <h2 className="text-xl font-semibold">Order Items</h2>
+                                    <h2 className="text-xl font-semibold">Rincian Pesanan</h2>
                                 </div>
-                                
+
                                 <div className="p-6">
                                     <div className="space-y-6">
                                         {order.items.map((item) => (
@@ -167,7 +167,7 @@ export default function OrderShow({ order }: OrderShowProps) {
                                                         <img
                                                             src={item.image}
                                                             alt={item.product_name}
-                                                            className="h-full w-full object-cover rounded-md"
+                                                            className="h-full w-full rounded-md object-cover"
                                                         />
                                                     ) : (
                                                         <div className="flex h-full w-full items-center justify-center">
@@ -175,58 +175,55 @@ export default function OrderShow({ order }: OrderShowProps) {
                                                         </div>
                                                     )}
                                                 </div>
-                                                
+
                                                 <div className="ml-4 flex flex-1 flex-col justify-between">
                                                     <div>
                                                         <h3 className="font-medium">{item.product_name}</h3>
-                                                        <p className="text-sm text-gray-500">
-                                                            Price: {format_rupiah(item.price)}
-                                                        </p>
+                                                        <p className="text-sm text-gray-500">Price: {format_rupiah(item.price)}</p>
                                                     </div>
-                                                    
-                                                    <div className="flex items-end justify-between">
-                                                        <p className="text-sm text-gray-500">
-                                                            Quantity: {item.quantity}
-                                                        </p>
-                                                        <p className="font-medium">
-                                                            {format_rupiah(item.price * item.quantity)}
-                                                        </p>
-                                                    </div>
+
+                                                    <>
+                                                        <p className="text-sm text-gray-500">Jumlah : {item.quantity}</p>
+
+                                                        <p className="font-medium">{format_rupiah(item.price * item.quantity)}</p>
+                                                    </>
                                                 </div>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
                             </Card>
-                            
+
                             <Card>
                                 <div className="border-b p-6">
-                                    <h2 className="text-xl font-semibold">Order Tracking</h2>
+                                    <h2 className="text-xl font-semibold">Pelacakan Pesanan</h2>
                                 </div>
-                                
+
                                 <div className="p-6">
                                     <div className="relative">
-                                        <div className="absolute left-4 top-0 h-full w-px bg-gray-200"></div>
-                                        
+                                        <div className="absolute top-0 left-4 h-full w-px bg-gray-200"></div>
+
                                         <div className="space-y-8">
                                             {order.tracking.map((track, index) => (
                                                 <div key={index} className="relative pl-10">
-                                                    <div className="absolute left-0 top-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white">
+                                                    <div className="bg-primary absolute top-1 left-0 flex h-8 w-8 items-center justify-center rounded-full text-white">
                                                         {index === 0 ? (
                                                             <CheckCircle className="h-5 w-5" />
                                                         ) : index === 1 ? (
                                                             <Package className="h-5 w-5" />
+                                                        ) : index === 2 ? (
+                                                            <ClipboardCopy className="h-5 w-5" />
                                                         ) : (
                                                             <Truck className="h-5 w-5" />
                                                         )}
                                                     </div>
-                                                    
+
                                                     <div>
-                                                        <h3 className="font-medium">{track.status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</h3>
+                                                        <h3 className="font-medium">
+                                                            {track.status.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
+                                                        </h3>
                                                         <p className="text-gray-500">{track.description}</p>
-                                                        <p className="mt-1 text-xs text-gray-400">
-                                                            {format(new Date(track.created_at), 'PPP p')}
-                                                        </p>
+                                                        <p className="mt-1 text-xs text-gray-400">{format(new Date(track.created_at), 'PPP p')}</p>
                                                     </div>
                                                 </div>
                                             ))}
@@ -235,14 +232,14 @@ export default function OrderShow({ order }: OrderShowProps) {
                                 </div>
                             </Card>
                         </div>
-                        
+
                         {/* Summary and Details */}
                         <div className="lg:col-span-4">
                             <Card className="mb-6">
                                 <div className="border-b p-6">
-                                    <h2 className="text-xl font-semibold">Order Summary</h2>
+                                    <h2 className="text-xl font-semibold">Ringkasan Pesanan</h2>
                                 </div>
-                                
+
                                 <div className="p-6">
                                     <div className="space-y-2">
                                         <div className="flex justify-between">
@@ -250,7 +247,7 @@ export default function OrderShow({ order }: OrderShowProps) {
                                             <span>{format_rupiah(subtotal)}</span>
                                         </div>
                                         <div className="flex justify-between">
-                                            <span>Shipping</span>
+                                            <span>Ongkir</span>
                                             <span>{format_rupiah(order.shipping_cost)}</span>
                                         </div>
                                         <div className="flex justify-between border-t pt-2 font-medium">
@@ -260,19 +257,24 @@ export default function OrderShow({ order }: OrderShowProps) {
                                     </div>
                                 </div>
                             </Card>
-                            
+
                             <Card className="mb-6">
                                 <div className="border-b p-6">
-                                    <h2 className="text-xl font-semibold">Order Information</h2>
+                                    <h2 className="text-xl font-semibold">Informasi Pesanan</h2>
                                 </div>
-                                
+
                                 <div className="p-6">
                                     <dl className="space-y-4">
                                         <div>
                                             <dt className="text-sm text-gray-500">Payment Method</dt>
                                             <dd>{getPaymentMethodLabel(order.payment_method)}</dd>
                                         </div>
-                                        
+                                        <div>
+                                            <dt className="text-sm text-gray-500">Transfer</dt>
+                                            <dd>BCA : 154545651564</dd>
+                                            <dt className="text-sm text-gray-500">Silahkan lakukan pembayaran ke nomor rekening di atas</dt>
+                                        </div>
+
                                         <div>
                                             <dt className="text-sm text-gray-500">Shipping Address</dt>
                                             <dd className="whitespace-pre-wrap">{order.shipping_address}</dd>
@@ -280,35 +282,29 @@ export default function OrderShow({ order }: OrderShowProps) {
                                     </dl>
                                 </div>
                             </Card>
-                            
+
                             {/* Payment Proof Section */}
                             <Card>
                                 <div className="border-b p-6">
-                                    <h2 className="text-xl font-semibold">Payment Proof</h2>
+                                    <h2 className="text-xl font-semibold">Bukti Pembayaran</h2>
                                 </div>
-                                
+
                                 <div className="p-6">
                                     {order.payment_proof ? (
                                         <div className="space-y-4">
-                                            <p className="text-sm text-gray-500">
-                                                Payment proof has been uploaded.
-                                            </p>
+                                            <p className="text-sm text-gray-500">Bukti Pembayaran Berhasi Diupload.</p>
                                             <div className="overflow-hidden rounded-md border">
-                                                <img 
-                                                    src={`/storage/${order.payment_proof}`}
-                                                    alt="Payment proof"
-                                                    className="w-full h-auto"
-                                                />
+                                                <img src={`/storage/${order.payment_proof}`} alt="Payment proof" className="h-auto w-full" />
                                             </div>
-                                            
+
                                             <Badge className={getPaymentStatusColor(order.payment_status)}>
-                                                Status: {order.payment_status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                                                Status: {order.payment_status.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
                                             </Badge>
                                         </div>
                                     ) : canUploadPaymentProof ? (
                                         <form onSubmit={handleSubmit} className="space-y-4">
                                             <div className="space-y-2">
-                                                <Label htmlFor="payment_proof">Upload Payment Proof</Label>
+                                                <Label htmlFor="payment_proof">Upload Bukti Pembayaran</Label>
                                                 <Input
                                                     id="payment_proof"
                                                     type="file"
@@ -316,39 +312,28 @@ export default function OrderShow({ order }: OrderShowProps) {
                                                     onChange={handleFileChange}
                                                     className={errors.payment_proof ? 'border-red-500' : ''}
                                                 />
-                                                {errors.payment_proof && (
-                                                    <p className="text-sm text-red-500">{errors.payment_proof}</p>
-                                                )}
+                                                {errors.payment_proof && <p className="text-sm text-red-500">{errors.payment_proof}</p>}
                                             </div>
-                                            
+
                                             {progress && (
-                                                <div className="w-full bg-gray-200 rounded-full h-2.5">
-                                                    <div 
-                                                        className="bg-primary h-2.5 rounded-full" 
-                                                        style={{ width: `${progress.percentage}%` }}
-                                                    ></div>
+                                                <div className="h-2.5 w-full rounded-full bg-gray-200">
+                                                    <div className="bg-primary h-2.5 rounded-full" style={{ width: `${progress.percentage}%` }}></div>
                                                 </div>
                                             )}
-                                            
-                                            <Button 
-                                                type="submit" 
-                                                className="w-full" 
-                                                disabled={processing || !data.payment_proof}
-                                            >
+
+                                            <Button type="submit" className="w-full" disabled={processing || !data.payment_proof}>
                                                 <Upload className="mr-2 h-4 w-4" />
-                                                Upload Payment Proof
+                                                Konfirmasi
                                             </Button>
-                                            
+
                                             <p className="text-xs text-gray-500">
-                                                Please upload proof of payment (receipt or transfer confirmation). 
-                                                Acceptable formats: JPG, PNG (max 2MB).
+                                                Silakan unggah bukti pembayaran (struk atau konfirmasi transfer). Format yang diterima: JPG, PNG (maks
+                                                2MB).
                                             </p>
                                         </form>
                                     ) : (
-                                        <div className="text-center py-4">
-                                            <p className="text-gray-500">
-                                                Payment proof upload is not available for this order's current status.
-                                            </p>
+                                        <div className="py-4 text-center">
+                                            <p className="text-gray-500">Anda sepertinya telah mengirim bukti pembayaran.</p>
                                         </div>
                                     )}
                                 </div>

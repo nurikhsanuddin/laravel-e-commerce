@@ -58,7 +58,9 @@ export default function Index({ orders }: Props) {
                                             <td className="px-4 py-2">{order.user.name}</td>
                                             <td className="px-4 py-2">{order.shipping_address}</td>
                                             <td className="px-4 py-2">
-                                                <Badge>{order.status}</Badge>
+                                                <Badge variant={order.status === 'driver_telah_ditugaskan' ? 'warning' : 'default'}>
+                                                    {order.status === 'driver_telah_ditugaskan' ? 'Pengiriman Baru' : 'Terkirim'}
+                                                </Badge>
                                             </td>
                                             <td className="px-4 py-2">
                                                 <Link href={`/driver/orders/${order.id}`}>

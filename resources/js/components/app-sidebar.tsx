@@ -1,4 +1,3 @@
-import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
@@ -43,7 +42,7 @@ const mainNavItems: NavItem[] = [
         title: 'Pesanan Saya',
         href: '/driver/orders',
         icon: Truck,
-        roles: ['driver', 'admin'], // Only driver can see their orders
+        roles: ['driver'], // Only driver can see their orders
     },
 ];
 
@@ -88,7 +87,7 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
+                {/* <NavFooter items={footerNavItems} className="mt-auto" /> */}
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

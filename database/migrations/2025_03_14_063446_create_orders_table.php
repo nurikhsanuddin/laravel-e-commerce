@@ -14,8 +14,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->decimal('total_price', 10, 2);
-            $table->enum('status', ['pending', 'processing', 'shipped', 'delivered', 'cancelled'])->default('pending');
-            $table->enum('payment_status', ['pending', 'paid', 'failed'])->default('pending');
+            $table->enum('status', ['menunggu', 'diproses', 'driver_telah_ditugaskan', 'terkirim', 'cancelled'])->default('menunggu');
+            $table->enum('payment_status', ['menunggu', 'terbayar', 'gagal'])->default('menunggu');
             $table->string('payment_method');
             $table->text('shipping_address');
             $table->decimal('shipping_cost', 10, 2);

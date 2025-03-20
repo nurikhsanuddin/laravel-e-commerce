@@ -59,13 +59,13 @@ class OrderController extends Controller
             abort(403);
         }
 
-        $order->status = 'delivered';
+        $order->status = 'terkirim';
         $order->save();
 
         OrderTracking::create([
             'order_id' => $order->id,
-            'status' => 'delivered',
-            'description' => 'Order has been delivered to the customer.'
+            'status' =>    OrderTracking::STATUS_DELIVERED,
+            'description' => 'Pesanan telah berhasil diantar ke customer.',
         ]);
 
         return back()->with('success', 'Order marked as delivered.');

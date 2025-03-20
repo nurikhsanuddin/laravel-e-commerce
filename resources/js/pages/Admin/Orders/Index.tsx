@@ -51,13 +51,13 @@ export default function Index({ orders }: Props) {
     // Helper function to get appropriate badge color based on status
     const getStatusBadgeColor = (status: string) => {
         switch (status) {
-            case 'pending':
+            case 'menunggu':
                 return 'bg-yellow-500';
-            case 'processing':
+            case 'diproses':
                 return 'bg-blue-500';
-            case 'out_for_delivery':
+            case 'driver_telah_ditugaskan':
                 return 'bg-purple-500';
-            case 'delivered':
+            case 'terkirim':
                 return 'bg-green-500';
             case 'cancelled':
                 return 'bg-red-500';
@@ -68,13 +68,13 @@ export default function Index({ orders }: Props) {
 
     const getPaymentStatusBadgeColor = (status: string) => {
         switch (status) {
-            case 'pending':
+            case 'menunggu':
                 return 'bg-yellow-500';
-            case 'processing':
+            case 'diproses':
                 return 'bg-blue-500';
-            case 'paid':
+            case 'terbayar':
                 return 'bg-green-500';
-            case 'failed':
+            case 'gagal':
                 return 'bg-red-500';
             default:
                 return 'bg-gray-500';

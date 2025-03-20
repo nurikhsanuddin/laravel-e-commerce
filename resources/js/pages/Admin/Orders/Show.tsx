@@ -79,13 +79,13 @@ export default function Show({ order, availableDrivers }: Props) {
     // Helper function to get appropriate badge color based on status
     const getStatusBadgeColor = (status: string) => {
         switch (status) {
-            case 'pending':
+            case 'menunggu':
                 return 'bg-yellow-500';
-            case 'processing':
+            case 'diproses':
                 return 'bg-blue-500';
-            case 'out_for_delivery':
+            case 'driver_telah_ditugaskan':
                 return 'bg-purple-500';
-            case 'delivered':
+            case 'terkirim':
                 return 'bg-green-500';
             case 'cancelled':
                 return 'bg-red-500';
@@ -96,13 +96,13 @@ export default function Show({ order, availableDrivers }: Props) {
 
     const getPaymentStatusBadgeColor = (status: string) => {
         switch (status) {
-            case 'pending':
+            case 'menunggu':
                 return 'bg-yellow-500';
-            case 'processing':
+            case 'diproses':
                 return 'bg-blue-500';
-            case 'paid':
+            case 'terbayar':
                 return 'bg-green-500';
-            case 'failed':
+            case 'gagal':
                 return 'bg-red-500';
             default:
                 return 'bg-gray-500';
@@ -272,7 +272,7 @@ export default function Show({ order, availableDrivers }: Props) {
                                         />
                                     </a>
 
-                                    {order.payment_status === 'processing' && (
+                                    {order.payment_status === 'diproses' && (
                                         <div className="flex w-full space-x-2">
                                             <Button onClick={handleVerifyPayment} disabled={isVerifying || isRejecting} className="flex-1">
                                                 <CheckCircleIcon className="mr-2 h-4 w-4" />
@@ -295,7 +295,7 @@ export default function Show({ order, availableDrivers }: Props) {
                                     <p className="text-muted-foreground">No payment proof uploaded yet</p>
                                 </div>
                             )}
-                            {order.payment_status === 'paid' && !order.driver && (
+                            {order.payment_status === 'terbayar' && !order.driver && (
                                 <div className="mt-4 space-y-2">
                                     <Label>Assign Driver</Label>
                                     <Select onValueChange={handleAssignDriver}>

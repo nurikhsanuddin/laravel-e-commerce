@@ -1,11 +1,11 @@
 import { Head, Link } from '@inertiajs/react';
-import { ChevronRight, Package } from 'lucide-react';
 import { format } from 'date-fns';
+import { ChevronRight, Package } from 'lucide-react';
 
 // Import components
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { format_rupiah } from '@/lib/utils';
 
 interface OrderItem {
@@ -33,13 +33,13 @@ interface OrdersIndexProps {
 export default function OrdersIndex({ orders }: OrdersIndexProps) {
     const getStatusColor = (status: string) => {
         switch (status.toLowerCase()) {
-            case 'pending':
+            case 'menunggu':
                 return 'bg-amber-100 text-amber-800';
-            case 'processing':
+            case 'diproses':
                 return 'bg-blue-100 text-blue-800';
-            case 'shipped':
+            case 'driver_telah_ditugaskan':
                 return 'bg-purple-100 text-purple-800';
-            case 'delivered':
+            case 'terkirim':
                 return 'bg-green-100 text-green-800';
             case 'cancelled':
                 return 'bg-red-100 text-red-800';
@@ -50,11 +50,11 @@ export default function OrdersIndex({ orders }: OrdersIndexProps) {
 
     const getPaymentStatusColor = (status: string) => {
         switch (status.toLowerCase()) {
-            case 'paid':
+            case 'terbayar':
                 return 'bg-green-100 text-green-800';
-            case 'pending':
+            case 'menunggu':
                 return 'bg-amber-100 text-amber-800';
-            case 'failed':
+            case 'gagal':
                 return 'bg-red-100 text-red-800';
             default:
                 return 'bg-gray-100 text-gray-800';
@@ -64,16 +64,16 @@ export default function OrdersIndex({ orders }: OrdersIndexProps) {
     return (
         <>
             <Head title="My Orders" />
-            
+
             <div className="min-h-screen bg-gray-50 py-12">
                 <div className="container mx-auto px-4">
                     <div className="mb-8 flex items-center justify-between">
-                        <h1 className="text-3xl font-bold">My Orders</h1>
+                        <h1 className="text-3xl font-bold">Pesanan</h1>
                         <Button variant="outline" asChild>
-                            <Link href={route('home')}>Continue Shopping</Link>
+                            <Link href={route('home')}>Lanjut Berbelanja</Link>
                         </Button>
                     </div>
-                    
+
                     {orders.length === 0 ? (
                         <Card className="flex flex-col items-center justify-center p-12 text-center">
                             <Package className="mb-4 h-16 w-16 text-gray-400" />
@@ -93,27 +93,22 @@ export default function OrdersIndex({ orders }: OrdersIndexProps) {
                                                 <div className="flex items-center gap-2 text-sm text-gray-500">
                                                     <span>Order #{order.id}</span>
                                                     <span>•</span>
-                                                    <span>
-                                                        {format(new Date(order.created_at), 'PPP')}
-                                                    </span>
+                                                    <span>{format(new Date(order.created_at), 'PPP')}</span>
                                                 </div>
                                                 <h3 className="mt-1 text-lg font-medium">
-                                                    {order.items.length} {order.items.length === 1 ? 'item' : 'items'} for {format_rupiah(order.total_price)}
+                                                    {order.items.length} {order.items.length === 1 ? 'item' : 'items'} for{' '}
+                                                    {format_rupiah(order.total_price)}
                                                 </h3>
                                             </div>
-                                            
+
                                             <div className="flex flex-wrap items-center gap-3">
-                                                <Badge className={getStatusColor(order.status)}>
-                                                    {order.status}
-                                                </Badge>
-                                                
-                                                <Badge className={getPaymentStatusColor(order.payment_status)}>
-                                                    {order.payment_status}
-                                                </Badge>
+                                                <Badge className={getStatusColor(order.status)}>{order.status}</Badge>
+
+                                                <Badge className={getPaymentStatusColor(order.payment_status)}>{order.payment_status}</Badge>
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <div className="p-4 sm:p-6">
                                         <div className="space-y-4">
                                             {/* Preview of first 2 items */}
@@ -124,7 +119,7 @@ export default function OrdersIndex({ orders }: OrdersIndexProps) {
                                                             <img
                                                                 src={item.image}
                                                                 alt={item.product_name}
-                                                                className="h-full w-full object-cover rounded-md"
+                                                                className="h-full w-full rounded-md object-cover"
                                                             />
                                                         ) : (
                                                             <div className="flex h-full w-full items-center justify-center">
@@ -140,7 +135,7 @@ export default function OrdersIndex({ orders }: OrdersIndexProps) {
                                                     </div>
                                                 </div>
                                             ))}
-                                            
+
                                             {/* Show indicator if there are more items */}
                                             {order.items.length > 2 && (
                                                 <p className="text-sm text-gray-500">
@@ -148,7 +143,7 @@ export default function OrdersIndex({ orders }: OrdersIndexProps) {
                                                 </p>
                                             )}
                                         </div>
-                                        
+
                                         <div className="mt-6 flex justify-end">
                                             <Button asChild>
                                                 <Link href={route('orders.show', order.id)}>

@@ -15,8 +15,12 @@ const badgeVariants = cva(
           "border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
         destructive:
           "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40",
+        warning:
+          "border-transparent text-white bg-yellow-500 text-black [a&]:hover:bg-yellow-600 focus-visible:ring-yellow-300 dark:focus-visible:ring-yellow-700",
+        success:
+          "border-transparent bg-green-500 text-white [a&]:hover:bg-green-600 focus-visible:ring-green-300 dark:focus-visible:ring-green-700",
         outline:
-          "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
+          "text-foreground border border-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
       },
     },
     defaultVariants: {
@@ -24,6 +28,7 @@ const badgeVariants = cva(
     },
   }
 )
+
 
 function Badge({
   className,

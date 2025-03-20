@@ -94,8 +94,8 @@ class OrderController extends Controller
         $order = Order::where('user_id', Auth::id())->findOrFail($id);
 
         // Only allow upload if payment status is pending
-        if ($order->payment_status !== 'pending') {
-            return back()->with('error', 'Payment proof can only be uploaded for pending payments');
+        if ($order->payment_status !== 'menunggu') {
+            return back()->with('error', 'Anda tidak dapat mengupload bukti pembayaran untuk pesanan ini.');
         }
 
         if ($request->hasFile('payment_proof')) {
@@ -109,7 +109,7 @@ class OrderController extends Controller
 
             // Update the order
             $order->payment_proof = $path;
-            $order->payment_status = 'processing'; // Change to processing status
+            $order->payment_status = 'diproses'; // Change to processing status
             $order->save();
 
             return back()->with('success', 'Payment proof uploaded successfully');

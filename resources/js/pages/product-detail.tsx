@@ -26,12 +26,13 @@ interface Product {
 interface Props {
     product: Product;
     relatedProducts: Product[];
+    productImages?: any; // Add the missing property
     auth: {
         user: { name: string; role: string } | null;
     };
 }
 
-export default function ProductDetail({ product, relatedProducts, auth }: Props) {
+export default function ProductDetail({ product, relatedProducts, productImages, auth }: Props) {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [cartItems, setCartItems] = useState<any[]>([]);
     const [cartCount, setCartCount] = useState(0);
@@ -101,7 +102,7 @@ export default function ProductDetail({ product, relatedProducts, auth }: Props)
             setQuantity(quantity - 1);
         }
     };
-    console.log('Product image:', product.image);
+    console.log('Product image:', productImages);
     return (
         <>
             <Head title={`${product.name} | PT. Menara Galvalum`} />
@@ -138,8 +139,8 @@ export default function ProductDetail({ product, relatedProducts, auth }: Props)
                             {/* Product Image */}
                             <div className="rounded-lg bg-white p-4 shadow-sm">
                                 <div className="aspect-square overflow-hidden rounded-md bg-gray-100">
-                                    {product.image ? (
-                                        <img src={product.image} className="h-full w-full object-cover" />
+                                    {productImages ? (
+                                        <img src={productImages} className="h-full w-full object-cover" />
                                     ) : (
                                         <div className="flex h-full w-full items-center justify-center bg-gray-200">
                                             <span className="text-gray-400">No image available</span>
@@ -248,7 +249,8 @@ export default function ProductDetail({ product, relatedProducts, auth }: Props)
                                             <div className="aspect-square bg-gray-100">
                                                 {relatedProduct.image ? (
                                                     <img
-                                                        src={relatedProduct.image}
+                                                        // get form storage
+                                                        src={`/storage/${relatedProduct}` || relatedProduct.image}
                                                         alt={relatedProduct.name}
                                                         className="h-full w-full object-cover"
                                                     />

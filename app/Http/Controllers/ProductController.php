@@ -91,6 +91,9 @@ class ProductController extends Controller
         return Inertia::render('product-detail', [
             'product' => $product,
             'relatedProducts' => $relatedProducts,
+            'productImages' => asset($product->image) ? [
+                asset('storage/' . $product->image)
+            ] : [],
             'auth' => [
                 'user' => auth()->user() ? [
                     'name' => auth()->user()->name,

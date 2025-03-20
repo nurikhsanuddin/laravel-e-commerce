@@ -49,7 +49,7 @@ class OrderController extends Controller
     {
         $order = Order::findOrFail($id);
 
-        if ($order->payment_status !== 'processing') {
+        if ($order->payment_status !== 'diproses') {
             return back()->with('error', 'This payment has already been processed.');
         }
 
@@ -62,7 +62,7 @@ class OrderController extends Controller
         OrderTracking::create([
             'order_id' => $order->id,
             'status' => OrderTracking::STATUS_PAYMENT_VERIFIED,
-            'description' => 'Payment has been verified and confirmed. Order is now being processed.'
+            'description' => 'Pembayran telah diverifikasi dan pesanan anda sedang diproses.'
         ]);
 
         return back()->with('success', 'Payment has been verified successfully.');
@@ -86,7 +86,7 @@ class OrderController extends Controller
         OrderTracking::create([
             'order_id' => $order->id,
             'status' => OrderTracking::STATUS_OUT_FOR_DELIVERY,
-            'description' => 'Order has been assigned to a driver and is out for delivery.'
+            'description' => 'Driver telah ditugaskan untuk mengantar pesanan.'
         ]);
 
         return back()->with('success', 'Driver has been assigned successfully.');

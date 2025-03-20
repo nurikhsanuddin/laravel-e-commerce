@@ -14,6 +14,7 @@ use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\DriverMiddleware;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\DashboardController;
 use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
 
 // Public routes
@@ -49,9 +50,7 @@ Route::middleware([
     ValidateSessionWithWorkOS::class,
     AdminMiddleware::class,
 ])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // User management routes
     Route::resource('users', UserController::class)->except(['create', 'store', 'destroy']);

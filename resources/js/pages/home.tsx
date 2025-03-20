@@ -43,6 +43,7 @@ export default function Home({ featuredProducts, categories, auth }: Props) {
     const [cartItems, setCartItems] = useState<any[]>([]);
     const [cartCount, setCartCount] = useState(0);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredProducts, setFilteredProducts] = useState(featuredProducts);
     const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
@@ -175,9 +176,28 @@ export default function Home({ featuredProducts, categories, auth }: Props) {
                                                 Dashboard
                                             </Link>
                                         )}
-                                        <div className="flex items-center gap-2">
-                                            <User className="h-5 w-5" />
-                                            <span className="hidden sm:inline">{auth.user.name}</span>
+                                        <div className="relative">
+                                            <Button
+                                                variant="ghost"
+                                                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                                                className="flex items-center gap-2"
+                                            >
+                                                <User className="h-5 w-5" />
+                                                <span className="hidden sm:inline">{auth.user.name}</span>
+                                            </Button>
+
+                                            {isUserMenuOpen && (
+                                                <div className="ring-opacity-5 absolute right-0 mt-2 w-48 rounded-md bg-white py-1 shadow-lg ring-1 ring-black">
+                                                    <Link
+                                                        href={route('logout')}
+                                                        method="post"
+                                                        as="button"
+                                                        className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                                                    >
+                                                        Logout
+                                                    </Link>
+                                                </div>
+                                            )}
                                         </div>
                                     </>
                                 ) : (
@@ -185,6 +205,7 @@ export default function Home({ featuredProducts, categories, auth }: Props) {
                                         <Link href={route('login')} className="hover:text-primary text-gray-700">
                                             Login
                                         </Link>
+
                                         {/* <Link href={route('register')}>
                                             <Button size="sm">Register</Button>
                                         </Link> */}
@@ -260,6 +281,14 @@ export default function Home({ featuredProducts, categories, auth }: Props) {
                                                 <User className="h-4 w-4" />
                                                 <span>{auth.user.name}</span>
                                             </div>
+                                            <Link
+                                                href={route('logout')}
+                                                method="post"
+                                                as="button"
+                                                className="hover:text-primary py-2 text-sm text-gray-700"
+                                            >
+                                                Logout
+                                            </Link>
                                         </>
                                     ) : (
                                         <>
@@ -424,7 +453,7 @@ export default function Home({ featuredProducts, categories, auth }: Props) {
                     <div className="container mx-auto px-4">
                         <h2 className="mb-8 text-center text-xl font-semibold sm:mb-10 sm:text-2xl">Mengapa Memilih Kami?</h2>
 
-                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 md:gap-8">
+                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 md:gap-1">
                             <div className="text-center">
                                 <div className="bg-primary/10 mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full sm:mb-4 sm:h-16 sm:w-16">
                                     <Truck className="text-primary h-6 w-6 sm:h-8 sm:w-8" />
@@ -446,7 +475,7 @@ export default function Home({ featuredProducts, categories, auth }: Props) {
                                 </p>
                             </div>
 
-                            <div className="text-center sm:col-span-2 md:col-span-1"></div>
+                            {/* <div className="text-center sm:col-span-2 md:col-span-1"></div> */}
 
                             <div className="text-center">
                                 <div className="bg-primary/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">

@@ -56,9 +56,9 @@ export default function Show({ order }: Props) {
             <div className="p-4">
                 <div className="mb-4">
                     <Button variant="outline" asChild>
-                        <Link href={`/driver/orders}`} className="flex items-center">
+                        <Link href={route('driver.orders.index')} className="flex items-center">
                             <ChevronLeft className="mr-2 h-4 w-4" />
-                            Back to Orders
+                            Kembali
                         </Link>
                     </Button>
                 </div>
@@ -85,7 +85,7 @@ export default function Show({ order }: Props) {
                                     </dd>
                                 </div>
                                 <div>
-                                    <dt className="text-sm font-medium text-gray-500">Delivery Address</dt>
+                                    <dt className="text-sm font-medium text-gray-500">Alamat Pengiriman</dt>
                                     <dd className="whitespace-pre-wrap">{order.shipping_address}</dd>
                                 </div>
                                 <div>
@@ -94,9 +94,9 @@ export default function Show({ order }: Props) {
                                 </div>
                             </dl>
 
-                            {order.status === 'shipped' && (
+                            {order.status === 'driver_telah_ditugaskan' && (
                                 <Button className="mt-6 w-full" onClick={handleMarkDelivered} disabled={processing}>
-                                    Mark as Delivered
+                                    Tandai Sudah Dikirim
                                 </Button>
                             )}
                         </CardContent>

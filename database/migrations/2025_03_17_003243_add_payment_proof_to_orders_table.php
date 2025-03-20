@@ -16,7 +16,7 @@ return new class extends Migration
         // For PostgreSQL, we need to drop and recreate the column instead of using change()
         if (DB::connection()->getDriverName() === 'pgsql') {
             // First backup the current values
-            DB::statement('ALTER TABLE orders ADD COLUMN payment_status_new VARCHAR(255) DEFAULT \'pending\'');
+            DB::statement('ALTER TABLE orders ADD COLUMN payment_status_new VARCHAR(255) DEFAULT \'menunggu\'');
             DB::statement('UPDATE orders SET payment_status_new = payment_status::VARCHAR');
 
             // Drop the old column
@@ -26,8 +26,8 @@ return new class extends Migration
 
             // Create the new column with the updated enum values
             Schema::table('orders', function (Blueprint $table) {
-                $table->enum('payment_status', ['pending', 'processing', 'paid', 'failed'])
-                    ->default('pending')
+                $table->enum('payment_status', ['menunggu', 'diproses', 'terbayar', 'gagal'])
+                    ->default('menunggu')
                     ->after('payment_proof');
             });
 
@@ -41,7 +41,7 @@ return new class extends Migration
         } else {
             // For MySQL, we can use the standard change method
             Schema::table('orders', function (Blueprint $table) {
-                $table->enum('payment_status', ['pending', 'processing', 'paid', 'failed'])->default('pending')->change();
+                $table->enum('payment_status', ['menunggu', 'diproses', 'terbayar', 'gagal'])->default('menunggu')->change();
             });
         }
     }
@@ -55,7 +55,7 @@ return new class extends Migration
         // Handle rollback for PostgreSQL
         if (DB::connection()->getDriverName() === 'pgsql') {
             // First backup the current values
-            DB::statement('ALTER TABLE orders ADD COLUMN payment_status_old VARCHAR(255) DEFAULT \'pending\'');
+            DB::statement('ALTER TABLE orders ADD COLUMN payment_status_old VARCHAR(255) DEFAULT \'menunggu\'');
             DB::statement('UPDATE orders SET payment_status_old = payment_status::VARCHAR');
 
             // Drop the new column
@@ -65,15 +65,15 @@ return new class extends Migration
 
             // Recreate the original column
             Schema::table('orders', function (Blueprint $table) {
-                $table->enum('payment_status', ['pending', 'paid', 'failed'])
-                    ->default('pending')
+                $table->enum('payment_status', ['menunggu', 'terbayar', 'gagal'])
+                    ->default('menunggu')
                     ->after('status');
             });
 
-            // Restore the values (processing values will revert to default)
+            // Restore the values (diproses values will revert to default)
             DB::statement('UPDATE orders SET payment_status = 
                 CASE 
-                    WHEN payment_status_old = \'processing\' THEN \'pending\'
+                    WHEN payment_status_old = \'diproses\' THEN \'menunggu\'
                     ELSE payment_status_old 
                 END');
 
@@ -84,7 +84,7 @@ return new class extends Migration
         } else {
             // For MySQL
             Schema::table('orders', function (Blueprint $table) {
-                $table->enum('payment_status', ['pending', 'paid', 'failed'])->default('pending')->change();
+                $table->enum('payment_status', ['menunggu', 'terbayar', 'gagal'])->default('menunggu')->change();
             });
         }
     }
