@@ -1,0 +1,19 @@
+<IfModule mod_rewrite.c>
+    Options -Indexes
+    RewriteEngine On
+    RewriteBase /
+
+    # Atur index file jika request kosong
+    DirectoryIndex index.php
+
+    # Jika URL kosong (root), langsung gunakan public/index.php
+    RewriteRule ^$ public/index.php [L]
+
+    # Untuk request yang tidak mengandung "public/" dan tidak merujuk ke file atau direktori nyata,
+    # alihkan ke folder public secara internal
+    RewriteCond %{REQUEST_URI} !^public/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ public/$1 [L,QSA]
+
+</IfModule>
