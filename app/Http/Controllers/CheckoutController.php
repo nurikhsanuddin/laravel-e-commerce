@@ -60,6 +60,33 @@ class CheckoutController extends Controller
             return redirect()->route('home')->with('error', 'Your cart is empty');
         }
 
+        // Validate product existence before processing
+        foreach ($cart as $key => $item) {
+            $product = Product::find($item['id']);
+            if (!$product) {
+                // Remove invalid product from cart
+                unset($cart[$key]);
+                continue;
+            }
+
+            // Ensure we're using the latest product data
+            $cart[$key]['price'] = $product->price;
+            $cart[$key]['weight'] = $product->weight ?? 0;
+
+            // Check if we have enough stock
+            if ($product->stock < $item['quantity']) {
+                return redirect()->route('cart')->with('error', "Not enough stock available for {$product->name}. Available: {$product->stock}");
+            }
+        }
+
+        // Update the cart in session after cleaning
+        Session::put('cart', $cart);
+
+        // If the cart became empty after validation, redirect
+        if (empty($cart)) {
+            return redirect()->route('home')->with('error', 'Your cart contains invalid products');
+        }
+
         $subtotal = 0;
         $weight = 0;
 
@@ -85,15 +112,17 @@ class CheckoutController extends Controller
 
         // Create order items and update product stock
         foreach ($cart as $item) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $item['id'],
-                'quantity' => $item['quantity'],
-                'price' => $item['price']
-            ]);
-
             $product = Product::find($item['id']);
+
+            // Double check that the product exists
             if ($product) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item['id'],
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price']
+                ]);
+
                 $product->stock -= $item['quantity'];
                 $product->save();
             }
