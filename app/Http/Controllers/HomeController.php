@@ -17,7 +17,7 @@ class HomeController extends Controller
         $featuredProducts = Product::with('category')
             ->where('stock', '>', 0)
             ->latest()
-            ->take(8)
+            // ->take(8)
             ->get();
 
         $categories = Category::all();
